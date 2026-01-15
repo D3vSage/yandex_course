@@ -1,3 +1,28 @@
+## Project structure
+
+```
+lab2/
+  manage.py
+  governors_county.csv
+  gov_project/
+    settings.py
+    urls.py
+    jinja2.py
+  elections/
+    models.py
+    views.py
+    management/
+      commands/
+        load_governors.py
+  templates/
+    index.html
+    macros.html
+```
+
+## DataBase Schema
+
+<img width="665" height="844" alt="schema" src="https://github.com/user-attachments/assets/1e887c58-dfa7-43d1-9406-39ac3f22071e" />
+
 ## Quick start (Windows / PowerShell)
 
 ### 1) Create venv & install deps
@@ -45,24 +70,3 @@ Open:
 * Main page: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 ---
-
-## Project structure
-
-```
-lab2/
-  manage.py
-  governors_county.csv
-  gov_project/
-    settings.py
-    urls.py
-    jinja2.py
-  elections/
-    models.py
-    views.py
-    management/
-      commands/
-        load_governors.py
-  templates/
-    index.html
-    macros.html
-```
