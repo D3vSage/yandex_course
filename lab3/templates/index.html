@@ -1,0 +1,431 @@
+{# templates/index.html #}
+{% import 'macros.html' as macros %}
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>US Elections 2020</title>
+
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #121a33;
+      --card-2: #0f1730;
+      --text: #e9ecf5;
+      --muted: #aab2d5;
+      --border: rgba(255,255,255,.10);
+      --primary: #6ea8fe;
+      --danger: #ff6b6b;
+      --success: #35d07f;
+      --warning: #ffd166;
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(110,168,254,.25), transparent 60%),
+                  radial-gradient(900px 500px at 90% 10%, rgba(53,208,127,.20), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+    }
+
+    .header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin: 0;
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    @media (min-width: 920px) {
+      .grid {
+        grid-template-columns: 420px 1fr;
+        align-items: start;
+      }
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      letter-spacing: .2px;
+    }
+
+    .muted { color: var(--muted); }
+
+    /* Flash messages */
+    .messages {
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .msg {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      margin: 8px 0;
+      font-size: 14px;
+    }
+    .msg.success { border-color: rgba(53,208,127,.45); }
+    .msg.error { border-color: rgba(255,107,107,.55); }
+    .msg.warning { border-color: rgba(255,209,102,.55); }
+    .msg.info { border-color: rgba(110,168,254,.55); }
+
+    /* Form */
+    .form-row { margin-bottom: 10px; }
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input[type="text"], select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 48, .65);
+      color: var(--text);
+      outline: none;
+    }
+    input[type="text"]::placeholder { color: rgba(170,178,213,.65); }
+    input[type="text"]:focus, select:focus {
+      border-color: rgba(110,168,254,.65);
+      box-shadow: 0 0 0 3px rgba(110,168,254,.15);
+    }
+
+    .error-text {
+      margin-top: 6px;
+      color: var(--danger);
+      font-size: 13px;
+    }
+
+    .btn-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      color: var(--text);
+      background: rgba(255,255,255,.06);
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .btn:hover { filter: brightness(1.05); }
+    .btn-primary {
+      border-color: rgba(110,168,254,.55);
+      background: rgba(110,168,254,.18);
+    }
+    .btn-danger {
+      border-color: rgba(255,107,107,.55);
+      background: rgba(255,107,107,.18);
+    }
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+    }
+    .badge.editing {
+      border-color: rgba(110,168,254,.55);
+      color: var(--text);
+      background: rgba(110,168,254,.14);
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+    }
+    thead th {
+      text-align: left;
+      font-size: 12px;
+      color: var(--muted);
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+    }
+    tbody td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: 13px;
+    }
+    tbody tr:hover {
+      background: rgba(255,255,255,.03);
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .inline-form { display: inline; margin: 0; }
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 0 10px;
+    }
+    .small {
+      font-size: 13px;
+    }
+
+    /* Simple “stats” list */
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .stat {
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+    }
+    .stat .k { color: var(--muted); font-size: 12px; }
+    .stat .v { font-size: 16px; font-weight: 700; margin-top: 4px; }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>US Elections 2020</h1>
+      </div>
+      <span class="badge {{ 'editing' if edit_mode else '' }}">
+        {{ 'Editing mode' if edit_mode else 'Ready' }}
+      </span>
+    </div>
+
+    {# Flash messages #}
+    {% if messages %}
+      <ul class="messages">
+        {% for m in messages %}
+          <li class="msg {{ m.tags }}">{{ m }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <div class="grid">
+
+      {# LEFT: Form card #}
+      <div class="card">
+        <div class="section-title">
+          <h2 style="margin:0;">{{ "Edit county" if edit_mode else "Add county" }}</h2>
+          {% if edit_mode and editing_county %}
+            <span class="badge editing">ID: {{ editing_county.id }}</span>
+          {% endif %}
+        </div>
+
+        <p class="muted small" style="margin-top:0;">
+          {{ "Update an existing county (name + state)." if edit_mode else "Create a new county and select its state." }}
+        </p>
+
+        <form method="post" action="">
+          {{ csrf_input }}
+
+          {% if edit_mode and editing_county %}
+            <input type="hidden" name="county_id" value="{{ editing_county.id }}">
+          {% endif %}
+
+          <div class="form-row">
+            <label>State</label>
+            {{ form.state }}
+            {% if form.state.errors %}
+              <div class="error-text">{{ form.state.errors }}</div>
+            {% endif %}
+          </div>
+          
+          <div class="form-row">
+            <label>County name</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+              <div class="error-text">{{ form.name.errors }}</div>
+            {% endif %}
+          </div>
+
+          {# non-field errors must be called as method in Jinja2 #}
+          {% if form.non_field_errors() %}
+            <div class="error-text">{{ form.non_field_errors() }}</div>
+          {% endif %}
+
+          <div class="btn-row">
+            <button class="btn btn-primary" type="submit">
+              {{ "Save changes" if edit_mode else "Add county" }}
+            </button>
+
+            {% if edit_mode %}
+              <a class="btn btn-ghost" href="{{ url('index') }}">Cancel</a>
+            {% endif %}
+          </div>
+        </form>
+
+        <div style="margin-top:14px;">
+          <div class="section-title" style="margin:0;">
+            <h2 style="margin:0;">Overall statistics</h2>
+            <span class="badge">rows: {{ overall.rows_count or 0 }}</span>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="k">Total votes sum</div>
+              <div class="v">{{ overall.total_votes_all or 0 }}</div>
+            </div>
+            <div class="stat">
+              <div class="k">Current votes sum</div>
+              <div class="v">{{ overall.current_votes_all or 0 }}</div>
+            </div>
+            <div class="stat">
+              <div class="k">Average percent</div>
+              <div class="v">{{ "%.2f"|format(overall.avg_percent_all or 0) }}</div>
+            </div>
+            <div class="stat">
+              <div class="k">Mode</div>
+              <div class="v">{{ "EDIT" if edit_mode else "ADD" }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# RIGHT: Tables card #}
+      <div class="card">
+        <h2>Counties</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 26%;">State</th>
+              <th>County</th>
+              <th style="width: 220px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in counties %}
+              <tr>
+                <td>{{ c.state.name }}</td>
+                <td>{{ c.name }}</td>
+                <td>
+                  <div class="actions">
+                    <a class="btn btn-ghost" href="{{ url('index') }}?edit={{ c.id }}">Edit</a>
+
+                    <form class="inline-form" method="post" action="">
+                      {{ csrf_input }}
+                      <input type="hidden" name="delete_id" value="{{ c.id }}">
+                      <button class="btn btn-danger" type="submit"
+                              onclick="return confirm('Delete {{ c.name }}?');">
+                        Delete
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div style="height: 16px;"></div>
+
+        <h2>States (aggregated)</h2>
+        {% set state_rows = [] %}
+        {% for s in states %}
+          {% do state_rows.append([
+            s.name,
+            s.counties_count,
+            s.total_votes_sum or 0,
+            s.current_votes_sum or 0,
+            "%.2f"|format(s.avg_percent or 0)
+          ]) %}
+        {% endfor %}
+        {{ macros.table(
+            ["State", "Counties", "Total votes sum", "Current votes sum", "Avg percent"],
+            state_rows,
+            "states_table"
+        ) }}
+
+        <div style="height: 16px;"></div>
+
+        <h2>Counties (first {{ table_limit }})</h2>
+        {% set result_rows = [] %}
+        {% for r in results %}
+          {% do result_rows.append([
+            r.county.state.name,
+            r.county.name,
+            r.total_votes,
+            r.current_votes,
+            r.percent
+          ]) %}
+        {% endfor %}
+        {{ macros.table(
+            ["State", "County", "Total votes", "Current votes", "Percent"],
+            result_rows,
+            "results_table"
+        ) }}
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
