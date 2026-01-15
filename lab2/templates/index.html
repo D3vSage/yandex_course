@@ -1,0 +1,68 @@
+{% import 'macros.html' as macros %}
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>US Elections 2020 — Governors County</title>
+</head>
+<body>
+  <h1>US Elections 2020 — County dataset</h1>
+
+  <h2>Overall statistics</h2>
+  <ul>
+    <li>Total rows in results: <b>{{ overall.rows_count }}</b></li>
+    <li>Total votes (sum): <b>{{ overall.total_votes_all or 0 }}</b></li>
+    <li>Current votes (sum): <b>{{ overall.current_votes_all or 0 }}</b></li>
+    <li>Average percent: <b>{{ "%.2f"|format(overall.avg_percent_all or 0) }}</b></li>
+  </ul>
+
+  <hr>
+
+  <h2>States (aggregated)</h2>
+  {% set state_rows = [] %}
+  {% for s in states %}
+    {% do state_rows.append([
+      s.name,
+      s.counties_count,
+      s.total_votes_sum or 0,
+      s.current_votes_sum or 0,
+      "%.2f"|format(s.avg_percent or 0)
+    ]) %}
+  {% endfor %}
+  {{ macros.table(
+      ["State", "Counties", "Total votes sum", "Current votes sum", "Avg percent"],
+      state_rows,
+      "states_table"
+  ) }}
+
+  <hr>
+
+  <h2>Counties</h2>
+  {% set county_rows = [] %}
+  {% for c in counties %}
+    {% do county_rows.append([c.state.name, c.name]) %}
+  {% endfor %}
+  {{ macros.table(["State", "County"], county_rows, "counties_table") }}
+
+  <hr>
+
+  <h2>County results (first 1000 rows)</h2>
+  {% set result_rows = [] %}
+  {% for r in results %}
+    {% do result_rows.append([
+      r.county.state.name,
+      r.county.name,
+      r.total_votes,
+      r.current_votes,
+      r.percent
+    ]) %}
+  {% endfor %}
+  {{ macros.table(
+      ["State", "County", "Total votes", "Current votes", "Percent"],
+      result_rows,
+      "results_table"
+  ) }}
+
+</body>
+</html>
