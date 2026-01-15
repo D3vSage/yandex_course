@@ -1,7 +1,7 @@
 ## Project structure
 
 ```
-lab2/
+lab3/
   manage.py
   governors_county.csv
   gov_project/
@@ -28,7 +28,7 @@ lab2/
 ### 1) Create venv & install deps
 
 ```powershell
-cd C:\lab2
+cd C:\lab3
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 
@@ -70,3 +70,12 @@ Open:
 * Main page: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 ---
+
+## CRUD for County
+
+CRUD operations are implemented for the **County** entity directly on the main page:
+
+- **Add** — create a new county (fields: `name`, `state`)
+- **Edit** — switches the main page into edit mode via `/?edit=<id>` and pre-fills the form
+- **Update** — saves changes via `POST` with hidden `county_id`
+- **Delete** — deletes a county via `POST` with hidden `delete_id`
